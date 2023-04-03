@@ -1,8 +1,11 @@
+import 'package:chat_01/src/domain/services/auth_service.dart';
 import 'package:chat_01/src/presentation/pages/pages.dart';
 import 'package:chat_01/src/presentation/widgets/custombutton.dart';
 import 'package:chat_01/src/presentation/widgets/input_field.dart';
+import 'package:chat_01/src/utils/helpers/show_alert.dart';
 import 'package:chat_01/src/utils/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -18,6 +21,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     final Responsive responsive = Responsive.of(context);
     return SafeArea(
       child: Container(
@@ -44,7 +48,25 @@ class _LoginFormState extends State<LoginForm> {
               textController: passCtrl,
             ),
             SizedBox(height: responsive.hp(5)),
-            CustomButtom(label: 'Sign In', onPressed: () {}),
+            CustomButtom(
+              color: authService.authenticating ? Colors.grey:Color(0xff43CCF0),
+              label: 'Sign In', 
+              onPressed: authService.authenticating ? null :() async{
+
+                FocusScope.of(context).unfocus();
+
+                final loginOk = await authService.login(emailCtrl.text.trim(), passCtrl.text.trim());
+
+                if(loginOk){
+                  //navegar otra pantalla
+                  Navigator.pushReplacementNamed(context, UsersPage.routeName);
+                }else{
+                  //Mostrar alerta
+                  showAlert(context, 'Login Invalid', 'Revisar credenciales');
+                }
+
+              }
+            ),
             SizedBox(height: responsive.hp(5)),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

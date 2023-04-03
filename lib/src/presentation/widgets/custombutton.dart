@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 class CustomButtom extends StatelessWidget {
   final String label;
   final void Function()? onPressed;
+  final Color color;
   const CustomButtom({
     super.key, 
     this.label = '', 
-    this.onPressed
+    this.onPressed, 
+    required this.color,
   });
 
   @override
@@ -15,7 +17,7 @@ class CustomButtom extends StatelessWidget {
     final Responsive responsive = Responsive.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xff43CCF0),
+        color: color,
         borderRadius: BorderRadius.circular(5)
       ),
       width: double.infinity,
