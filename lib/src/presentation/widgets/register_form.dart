@@ -1,4 +1,5 @@
 import 'package:chat_01/src/domain/services/auth_service.dart';
+import 'package:chat_01/src/domain/services/socket_service.dart';
 import 'package:chat_01/src/presentation/pages/pages.dart';
 import 'package:chat_01/src/presentation/widgets/custombutton.dart';
 import 'package:chat_01/src/presentation/widgets/input_field.dart';
@@ -23,6 +24,7 @@ class _RegisterFormState extends State<RegisterForm> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final socketService = Provider.of<SocketService>(context);
     final Responsive responsive = Responsive.of(context);
     return SafeArea(
       child: Container(
@@ -56,7 +58,7 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
             SizedBox(height: responsive.hp(5)),
             CustomButtom(
-              color: authService.authenticating ? Colors.grey:Color(0xff43CCF0),
+              color: authService.authenticating ? Colors.grey:const Color(0xff43CCF0),
               label: 'Sign Up', 
               onPressed: authService.authenticating ? null :() async{
 
@@ -65,12 +67,15 @@ class _RegisterFormState extends State<RegisterForm> {
                 final registerOk = await authService.register(userCtrl.text.trim(),emailCtrl.text.trim(), passCtrl.text.trim());
 
                 if(registerOk==true){
-                  //navegar otra pantalla
+                  socketService.connect();
+                  // ignore: use_build_context_synchronously
                   Navigator.pushReplacementNamed(context, UsersPage.routeName);
                 }else if(registerOk!=null){
+                  // ignore: use_build_context_synchronously
                   showAlert(context, 'Registro incorrecto', registerOk);
                 }else{
                   //Mostrar alerta
+                  // ignore: use_build_context_synchronously
                   showAlert(context, 'Registro incorrecto', 'Njd rellena bien los campos cv');
                 }
 

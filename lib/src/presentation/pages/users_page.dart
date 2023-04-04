@@ -1,5 +1,8 @@
 import 'package:chat_01/src/domain/models/user.dart';
 import 'package:chat_01/src/domain/services/auth_service.dart';
+import 'package:chat_01/src/domain/services/chat_service.dart';
+import 'package:chat_01/src/domain/services/socket_service.dart';
+import 'package:chat_01/src/domain/services/users_services.dart';
 import 'package:chat_01/src/presentation/pages/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,17 +18,20 @@ class UsersPage extends StatefulWidget {
 
 class _UsersPageState extends State<UsersPage> {
 
+  final usersService = UsersService();
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
-  final users = [
-    User(online: true, email: 'user1@tetas.com', username: 'Daniel', uid: '1'),
-    User(online: true, email: 'user2@tetas.com', username: 'Esteban', uid: '2'),
-    User(online: false, email: 'user3@tetas.com', username: 'Andres', uid: '3'),
-  ];
+  List<User> usersdb = [];
+
+  @override
+  void initState() {
+    _loadUsers();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-
+    final socketService = Provider.of<SocketService>(context);
     final authService = Provider.of<AuthService>(context);
     final user = authService.user;
 
@@ -41,6 +47,7 @@ class _UsersPageState extends State<UsersPage> {
         leading: IconButton(
           onPressed: (){
 
+            socketService.disconnect();
             Navigator.pushReplacementNamed(context, LoginPage.routeName);
             AuthService.deleteToken();
 
@@ -49,8 +56,10 @@ class _UsersPageState extends State<UsersPage> {
         ),
         actions: [
           Container(
-            margin: EdgeInsets.only(right: 10),
-            child: Icon(Icons.check_circle, color: Colors.green[100],),
+            margin: const EdgeInsets.only(right: 10),
+            child: (socketService.serverStatus==ServerStatus.Online)
+            ?Icon(Icons.check_circle, color: Colors.green[100],)
+            :const Icon(Icons.offline_bolt, color: Colors.red,),
           )
         ],
       ),
@@ -70,9 +79,9 @@ class _UsersPageState extends State<UsersPage> {
   ListView _listViewUsers() {
     return ListView.separated(
       physics: const BouncingScrollPhysics(),
-      itemBuilder: (_, i) => _userListTile(users[i]), 
+      itemBuilder: (_, i) => _userListTile(usersdb[i]), 
       separatorBuilder: (_, i) => const Divider(), 
-      itemCount: users.length
+      itemCount: usersdb.length
     );
   }
 
@@ -92,12 +101,21 @@ class _UsersPageState extends State<UsersPage> {
           borderRadius: BorderRadius.circular(100)
           ),
         ),
+        onTap: () {
+          final chatService = Provider.of<ChatService>(context, listen: false);
+          chatService.userPara = user;
+          Navigator.pushNamed(context, ChatPage.routeName);
+        },
       );
   }
 
   _loadUsers() async {
-
-    await Future.delayed(Duration(milliseconds: 1000));
+    
+    usersdb = await usersService.getUsers();
+    setState(() {
+      
+    });
+    //await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
 

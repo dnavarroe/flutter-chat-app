@@ -1,4 +1,5 @@
 import 'package:chat_01/src/domain/services/auth_service.dart';
+import 'package:chat_01/src/domain/services/socket_service.dart';
 import 'package:chat_01/src/presentation/pages/pages.dart';
 import 'package:chat_01/src/presentation/widgets/custombutton.dart';
 import 'package:chat_01/src/presentation/widgets/input_field.dart';
@@ -22,6 +23,7 @@ class _LoginFormState extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final socketService = Provider.of<SocketService>(context);
     final Responsive responsive = Responsive.of(context);
     return SafeArea(
       child: Container(
@@ -49,7 +51,7 @@ class _LoginFormState extends State<LoginForm> {
             ),
             SizedBox(height: responsive.hp(5)),
             CustomButtom(
-              color: authService.authenticating ? Colors.grey:Color(0xff43CCF0),
+              color: authService.authenticating ? Colors.grey:const Color(0xff43CCF0),
               label: 'Sign In', 
               onPressed: authService.authenticating ? null :() async{
 
@@ -58,10 +60,12 @@ class _LoginFormState extends State<LoginForm> {
                 final loginOk = await authService.login(emailCtrl.text.trim(), passCtrl.text.trim());
 
                 if(loginOk){
-                  //navegar otra pantalla
+                  socketService.connect();
+                  // ignore: use_build_context_synchronously
                   Navigator.pushReplacementNamed(context, UsersPage.routeName);
                 }else{
                   //Mostrar alerta
+                  // ignore: use_build_context_synchronously
                   showAlert(context, 'Login Invalid', 'Revisar credenciales');
                 }
 

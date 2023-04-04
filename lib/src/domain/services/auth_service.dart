@@ -11,7 +11,7 @@ class AuthService with ChangeNotifier {
 
   late User user;
   bool _authenticating = false;
-  final _storage = FlutterSecureStorage();
+  final _storage = const FlutterSecureStorage();
 
   bool get authenticating => _authenticating;
   set authenticating(bool value){
@@ -31,7 +31,7 @@ class AuthService with ChangeNotifier {
   }
 
   static Future<void> deleteToken()async{
-    final _storage =  FlutterSecureStorage();
+    final _storage =  const FlutterSecureStorage();
     await _storage.delete(key: 'token');
   }
   
@@ -119,7 +119,7 @@ class AuthService with ChangeNotifier {
 
       return true;
     }else{
-      this.logout();
+      logout();
       return false;
     }
     
