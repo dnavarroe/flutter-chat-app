@@ -1,3 +1,5 @@
+export 'package:chat_01/src/presentation/pages/splash_page.dart';
+
 export 'package:chat_01/src/presentation/pages/chat_page.dart';
 export 'package:chat_01/src/presentation/pages/loading_page.dart';
 export 'package:chat_01/src/presentation/pages/login_page.dart';

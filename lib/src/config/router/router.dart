@@ -9,4 +9,6 @@ final Map<String, Widget Function(BuildContext)> appRoutes = {
   LoginPage.routeName    : ( _ ) => const LoginPage(),
   RegisterPage.routeName : ( _ ) => const RegisterPage(),
   LoadingPage.routeName  : ( _ ) => const LoadingPage(),
+  SplashScreen.routeName  : ( _ ) => const SplashScreen(),
+
 };

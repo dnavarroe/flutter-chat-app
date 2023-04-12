@@ -11,11 +11,12 @@ class LoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xffDAE4F2),
       body: FutureBuilder(
         future: checkLoginState(context),
         builder: (context, snapshot) {
           return const Center(
-           child: Text('Cogela suave...')
+           child: Text('Cogela suave que somos pobres...')
           );
         }, 
       ),

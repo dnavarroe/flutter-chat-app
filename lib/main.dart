@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Chat App',
-        initialRoute: LoadingPage.routeName,
+        initialRoute: SplashScreen.routeName,
         routes: appRoutes,
       ),
     );
